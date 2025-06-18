@@ -150,7 +150,26 @@ app.get("/adoptions", (req, res) => {
     }
   );
 });
-
+// POST
+app.post("/adoptions", (req, res) => {
+  const { animal_id, adopter_id, adoption_date } = req.body;
+  db.run(
+    `INSERT INTO adoptions (animal_id, adopter_id, adoption_date) VALUES (?, ?, ?)`,
+    [animal_id, adopter_id, adoption_date],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json({ id: this.lastID });
+    }
+  );
+});
+//DELETE
+app.delete("/adoptions/:id", (req, res) => {
+  const { id } = req.params;
+  db.run(`DELETE FROM adoptions WHERE id=?`, [id], function (err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(204).end();
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor API escuchando en http://localhost:${PORT}`);
