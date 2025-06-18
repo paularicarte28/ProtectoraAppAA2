@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   window.deleteAdoption = async (id) => {
     if (confirm("¿Eliminar esta adopción?")) {
       await apiFetch(`/adoptions/${id}`, "DELETE");
-      await loadAnimals(); // actualizar lista de no adoptados
+      await loadAnimals(); //actuakuzar lista
       loadAdoptions();
     }
   };
@@ -58,7 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = Object.fromEntries(new FormData(form));
     await apiFetch("/adoptions", "POST", data);
 
-    // marcar animal como adoptado
     await apiFetch(`/animals/${data.animal_id}`, "PUT", {
       ...data,
       adopted: "Y",
