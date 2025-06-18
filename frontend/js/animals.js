@@ -41,25 +41,34 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
-    data.age = data.age ? parseInt(data.age) : null;
 
-    if (!data.name || !data.species) {
-      alert("Los campos Nombre y Especie son obligatorios.");
-      return;
-    }
-
-    const method = data.id ? "PUT" : "POST";
-    const url = data.id ? `/animals/${data.id}` : "/animals";
+    const errorDiv = document.getElementById("animal-errors");
+    if (errorDiv) errorDiv.remove();
 
     try {
-      await apiFetch(url, method, data);
+      await apiFetch("/animals", "POST", data);
       form.reset();
       loadAnimals();
     } catch (err) {
-      console.error("Error al guardar:", err.message);
-      alert("Error: " + err.message);
+      const container = document.createElement("div");
+      container.id = "animal-errors";
+      container.className = "alert alert-danger mt-2";
+
+      try {
+        const parsed = JSON.parse(err.message);
+        if (parsed.errors) {
+          container.innerHTML = parsed.errors.map(e => `<div>${e.msg}</div>`).join("");
+        } else {
+          container.textContent = parsed.error || "Error desconocido.";
+        }
+      } catch {
+        container.textContent = "Error inesperado.";
+      }
+
+      form.after(container);
     }
   });
+
 
   loadAnimals();
 });

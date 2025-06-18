@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require("body-parser");
+const { body, validationResult } = require("express-validator");
 
 const app = express();
 const db = new sqlite3.Database("db.sqlite");
@@ -21,11 +22,13 @@ db.serialize(() => {
     )`);
 
   db.run(`
-    CREATE TABLE IF NOT EXISTS adopters (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      full_name TEXT NOT NULL,
-      email TEXT NOT NULL
-    )`);
+  CREATE TABLE IF NOT EXISTS adopters (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT NOT NULL,
+    address TEXT,
+    phone TEXT,
+    email TEXT NOT NULL
+  )`);
 
   db.run(`
     CREATE TABLE IF NOT EXISTS adoptions (
@@ -49,20 +52,27 @@ app.get("/animals", (req, res) => {
 
 //POST ANIMALS
 
-app.post("/animals", (req, res) => {
-  const { name, species, adopted } = req.body;
-  if (!name || !species)
-    return res.status(400).json({ error: "Nombre y especie obligatorios" });
+app.post("/animals",
+  [
+    body("name").notEmpty().withMessage("El nombre es obligatorio"),
+    body("species").notEmpty().withMessage("La especie es obligatoria")
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  db.run(
-    "INSERT INTO animals (name, species, adopted) VALUES (?, ?, ?)",
-    [name, species, adopted || "N"],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ id: this.lastID });
-    }
-  );
-});
+    const { name, species, adopted } = req.body;
+    db.run(
+      "INSERT INTO animals (name, species, adopted) VALUES (?, ?, ?)",
+      [name, species, adopted || "N"],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ id: this.lastID });
+      }
+    );
+  }
+);
 
 //UPDATE ANIMALS
 
@@ -97,31 +107,47 @@ app.get("/adopters", (req, res) => {
     res.json(rows);
   });
 });
-// POST ADOPTERS
-app.post("/adopters", (req, res) => {
-  const { full_name, email } = req.body;
-  if (!full_name || !email)
-    return res.status(400).json({ error: "Nombre y email obligatorios" });
 
-  db.run(
-    "INSERT INTO adopters (full_name, email) VALUES (?, ?)",
-    [full_name, email],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ id: this.lastID });
-    }
-  );
-});
+// POST ADOPTERS
+app.post("/adopters",
+  [
+    body("full_name").notEmpty().withMessage("El nombre completo es obligatorio"),
+    body("email").isEmail().withMessage("Debe ser un email válido")
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    const { full_name, address, phone, email } = req.body;
+
+    db.run(
+      "INSERT INTO adopters (full_name, address, phone, email) VALUES (?, ?, ?, ?)",
+      [full_name, address, phone, email],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.status(201).json({ id: this.lastID });
+      }
+    );
+  }
+);
 
 // UPDATE ADOPTERS
 
-app.put("/adopters/:id", (req, res) => {
+app.put("/adopters/:id", [
+  body("full_name").notEmpty().withMessage("El nombre es obligatorio"),
+  body("email").isEmail().withMessage("Email no válido"),
+], (req, res) => {
   const { id } = req.params;
-  const { full_name, email } = req.body;
+  const { full_name, address, phone, email } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
 
   db.run(
-    "UPDATE adopters SET full_name = ?, email = ? WHERE id = ?",
-    [full_name, email, id],
+    `UPDATE adopters SET full_name = ?, address = ?, phone = ?, email = ? WHERE id = ?`,
+    [full_name, address, phone, email, id],
     function (err) {
       if (err) return res.status(500).json({ error: err.message });
       res.status(204).end();
