@@ -30,6 +30,15 @@ db.serialize(() => {
     phone TEXT,
     email TEXT UNIQUE
   )`);
+  db.run(`CREATE TABLE IF NOT EXISTS adoptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  animal_id INTEGER NOT NULL,
+  adopter_id INTEGER NOT NULL,
+  adoption_date TEXT NOT NULL,
+  FOREIGN KEY (animal_id) REFERENCES animals(id),
+  FOREIGN KEY (adopter_id) REFERENCES adopters(id)
+)`);
+
 });
 
 //ANIMALES
@@ -120,6 +129,43 @@ app.put("/adopters/:id", (req, res) => {
 app.delete("/adopters/:id", (req, res) => {
   const { id } = req.params;
   db.run(`DELETE FROM adopters WHERE id=?`, [id], function (err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.status(204).end();
+  });
+});
+
+
+//ADOPTIONS
+
+//GET
+app.get("/adoptions", (req, res) => {
+  db.all(
+    `SELECT adoptions.id, animals.name AS animal_name, adopters.full_name AS adopter_name, adoption_date
+     FROM adoptions
+     JOIN animals ON animals.id = adoptions.animal_id
+     JOIN adopters ON adopters.id = adoptions.adopter_id`,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
+});
+// POST
+app.post("/adoptions", (req, res) => {
+  const { animal_id, adopter_id, adoption_date } = req.body;
+  db.run(
+    `INSERT INTO adoptions (animal_id, adopter_id, adoption_date) VALUES (?, ?, ?)`,
+    [animal_id, adopter_id, adoption_date],
+    function (err) {
+      if (err) return res.status(500).json({ error: err.message });
+      res.status(201).json({ id: this.lastID });
+    }
+  );
+});
+//DELETE
+app.delete("/adoptions/:id", (req, res) => {
+  const { id } = req.params;
+  db.run(`DELETE FROM adoptions WHERE id=?`, [id], function (err) {
     if (err) return res.status(500).json({ error: err.message });
     res.status(204).end();
   });
