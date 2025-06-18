@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const pool = require("../config/db");
 
 const getAllAnimals = async () => {
   const [rows] = await db.query("SELECT * FROM animals");
@@ -21,11 +22,18 @@ const createAnimal = async (data) => {
 };
 
 const updateAnimal = async (id, data) => {
-  const { name, species, breed, age, health, intake_date, adopted } = data;
-  await db.query(
-    `UPDATE animals SET name=?, species=?, breed=?, age=?, health=?, intake_date=?, adopted=? WHERE id=?`,
-    [name, species, breed, age, health, intake_date, adopted, id]
-  );
+  const fields = [];
+  const values = [];
+
+  for (const key in data) {
+    fields.push(`${key} = ?`);
+    values.push(data[key]);
+  }
+
+  const sql = `UPDATE animals SET ${fields.join(", ")} WHERE id = ?`;
+  values.push(id);
+
+  await pool.query(sql, values);
 };
 
 const deleteAnimal = async (id) => {
