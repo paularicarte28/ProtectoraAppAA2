@@ -30,6 +30,7 @@ db.serialize(() => {
     phone TEXT,
     email TEXT UNIQUE
   )`);
+
   db.run(`CREATE TABLE IF NOT EXISTS adoptions (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   animal_id INTEGER NOT NULL,
@@ -98,17 +99,37 @@ app.get("/adopters", (req, res) => {
 });
 
 // POST 
-app.post("/adopters", (req, res) => {
-  const { full_name, address, phone, email } = req.body;
-  db.run(
-    `INSERT INTO adopters (full_name, address, phone, email)
-     VALUES (?, ?, ?, ?)`,
-    [full_name, address, phone, email],
-    function (err) {
-      if (err) return res.status(500).json({ error: err.message });
-      res.status(201).json({ id: this.lastID });
+app.post("/adoptions", (req, res) => {
+  const { animal_id, adopter_id, adoption_date } = req.body;
+
+  db.get(`SELECT adopted FROM animals WHERE id = ?`, [animal_id], (err, row) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (!row) {
+      return res.status(404).json({ error: "Animal no encontrado" });
     }
-  );
+
+    if (row.adopted === "Y") {
+      return res.status(400).json({ error: "Este animal ya ha sido adoptado" });
+    }
+
+    db.run(
+      `INSERT INTO adoptions (animal_id, adopter_id, adoption_date) VALUES (?, ?, ?)`,
+      [animal_id, adopter_id, adoption_date],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.run(
+          `UPDATE animals SET adopted = "Y" WHERE id = ?`,
+          [animal_id],
+          (err2) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.status(201).json({ id: this.lastID });
+          }
+        );
+      }
+    );
+  });
 });
 
 // PUT 
