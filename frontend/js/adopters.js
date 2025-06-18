@@ -39,10 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form));
 
-    if (!data.full_name) {
-      alert("El campo 'Nombre completo' es obligatorio.");
-      return;
-    }
+    const errorDiv = document.getElementById("adopter-errors");
+    if (errorDiv) errorDiv.remove();
 
     const method = data.id ? "PUT" : "POST";
     const url = data.id ? `/adopters/${data.id}` : "/adopters";
@@ -52,8 +50,22 @@ document.addEventListener("DOMContentLoaded", () => {
       form.reset();
       loadAdopters();
     } catch (err) {
-      console.error("Error al guardar:", err.message);
-      alert("Error: " + err.message);
+      const container = document.createElement("div");
+      container.id = "adopter-errors";
+      container.className = "alert alert-danger mt-2";
+
+      try {
+        const parsed = JSON.parse(err.message);
+        if (parsed.errors) {
+          container.innerHTML = parsed.errors.map(e => `<div>${e.msg}</div>`).join("");
+        } else {
+          container.textContent = parsed.error || "Error desconocido.";
+        }
+      } catch {
+        container.textContent = "Error inesperado.";
+      }
+
+      form.after(container);
     }
   });
 
