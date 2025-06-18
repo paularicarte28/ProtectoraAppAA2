@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpass
+      MARIADB_DATABASE: protectora
+      MARIADB_USER: user
+      MARIADB_PASSWORD: userpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    depends_on:
+      - mariadb
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: user
+      DB_PASSWORD: userpass
+      DB_NAME: protectora
+      PORT: 3001
+    volumes:
+      - ./backend:/app
+    command: npm start
+
+volumes:
+  mariadb_data:
