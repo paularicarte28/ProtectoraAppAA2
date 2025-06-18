@@ -51,3 +51,13 @@ jobs:
       - name: Ejecutar tests
         run: npm run test:integration
         working-directory: backend
+
+  build_image:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Crear imagen Docker del backend
+        run: docker build -t protectora-backend ./backend
