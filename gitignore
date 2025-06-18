@@ -1,0 +1,15 @@
+# Node.js dependencies
+node_modules/
+
+# SQLite database
+db.sqlite
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
