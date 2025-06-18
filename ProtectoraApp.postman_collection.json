@@ -1,0 +1,152 @@
+{
+  "info": {
+    "name": "ProtectoraApp API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Animales",
+      "item": [
+        {
+          "name": "GET /animals",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/animals",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "animals"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /animals",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Luna\",\n  \"species\": \"Perro\",\n  \"adopted\": \"N\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3001/animals",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "animals"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adoptantes",
+      "item": [
+        {
+          "name": "GET /adopters",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/adopters",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "adopters"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /adopters",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Juan P\u00e9rez\",\n  \"address\": \"Calle 123\",\n  \"phone\": \"123456789\",\n  \"email\": \"juan@example.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3001/adopters",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "adopters"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Adopciones",
+      "item": [
+        {
+          "name": "GET /adoptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3001/adoptions",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "adoptions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "POST /adoptions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"animal_id\": 1,\n  \"adopter_id\": 1,\n  \"adoption_date\": \"2025-06-18\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:3001/adoptions",
+              "host": [
+                "localhost"
+              ],
+              "port": "3001",
+              "path": [
+                "adoptions"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
