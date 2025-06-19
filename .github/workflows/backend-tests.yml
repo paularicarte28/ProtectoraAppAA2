@@ -20,11 +20,6 @@ jobs:
           MYSQL_PASSWORD: testpass
         ports:
           - 3307:3306
-        options: >-
-          --health-cmd="mysqladmin ping --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
 
     steps:
       - name: Clonar repositorio
@@ -38,7 +33,7 @@ jobs:
         run: |
           echo "Esperando a MariaDB..."
           for i in {1..30}; do
-            nc -z 127.0.0.1 3307 && echo "¡MariaDB lista!" && exit 0
+            mysqladmin ping -h 127.0.0.1 -P 3307 -u testuser -ptestpass && echo "¡MariaDB lista!" && exit 0
             sleep 2
           done
           echo "¡Timeout esperando MariaDB!" && exit 1
