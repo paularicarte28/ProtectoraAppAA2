@@ -34,4 +34,4 @@ INSERT INTO animals (name, species, breed, age, health, intake_date, adopted)
 VALUES ('Luna', 'Perro', 'Labrador', 4, 'Sano', '2024-05-01', 'N');
 
 INSERT INTO adopters (full_name, address, phone, email)
-VALUES ('Carlos Martínez', 'Calle Falsa 123', '600000000', 'carlos@mail.com');
+VALUES ('Carlos Marco', 'Calle Prueba 123', '600000000', 'carlos@mail.com');
