@@ -1,5 +1,6 @@
 const request = require("supertest");
 const app = require("../../server");
+const pool = require("../../config/db");
 
 describe("Animals API", () => {
   test("GET /animals devuelve 200", async () => {
@@ -43,4 +44,7 @@ describe("Animals API", () => {
     const eliminar = await request(app).delete(`/animals/${id}`);
     expect(eliminar.statusCode).toBe(204);
   });
+});
+afterAll(async () => {
+  await pool.end();
 });

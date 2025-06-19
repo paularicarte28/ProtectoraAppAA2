@@ -1,0 +1,42 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Entorno
+.env
+
+# Logs
+*.log
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Docker
+*.pid
+*.sock
+
+# Jest (tests)
+coverage/
+jest-test-results.json
+
+# VS Code
+.vscode/
+
+# GitHub Actions
+.github/workflows/*.log
+
+# Archivos temporales
+*.tmp
+*.swp
+*.bak
+*.old
+
+# SQL Dumps
+*.sql
+
+# Archivos de pruebas
+backend/test/tmp/

@@ -1,5 +1,6 @@
 const request = require("supertest");
 const app = require("../../server");
+const pool = require("../../config/db");
 
 describe("Adoptions API", () => {
   let testAnimalId, testAdopterId;
@@ -28,7 +29,7 @@ describe("Adoptions API", () => {
   test("POST /adoptions responde 400 si faltan datos", async () => {
     const res = await request(app).post("/adoptions").send({});
     expect(res.statusCode).toBe(400);
-    expect(res.body.errors).toBeDefined(); // Corregido
+    expect(res.body.errors).toBeDefined();
   });
 
   test("POST /adoptions responde 201 si todo es correcto", async () => {
@@ -50,4 +51,8 @@ describe("Adoptions API", () => {
     expect(res.statusCode).toBe(400);
     expect(res.body.error).toMatch(/ya ha sido adoptado/i);
   });
+});
+
+afterAll(async () => {
+  await pool.end();
 });
