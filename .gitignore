@@ -7,6 +7,7 @@ package-lock.json
 
 # Entorno
 .env
+.env.*
 
 # Logs
 *.log
@@ -18,6 +19,7 @@ Thumbs.db
 # Docker
 *.pid
 *.sock
+docker-compose.override.yml
 
 # Jest (tests)
 coverage/
@@ -40,3 +42,7 @@ jest-test-results.json
 
 # Archivos de pruebas
 backend/test/tmp/
+
+# Frontend específico
+frontend/node_modules/
+frontend/dist/

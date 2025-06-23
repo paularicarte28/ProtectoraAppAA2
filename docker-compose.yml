@@ -32,5 +32,17 @@ services:
       - ./backend:/app
     command: npm start
 
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev -- --host
+    depends_on:
+      - backend
+
 volumes:
   mariadb_data:
